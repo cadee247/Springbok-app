@@ -1,14 +1,12 @@
-# Use OpenJDK image
-FROM eclipse-temurin:17-jdk-alpine
-
-# Set working directory
+# Use Maven to build the app
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
 
-# Copy the JAR built by Maven
-COPY target/springbok-backend-0.0.1-SNAPSHOT.jar app.jar
-
-# Expose port
-EXPOSE 8080
-
-# Run the app
-ENTRYPOINT ["java","-jar","app.jar"]
+# Use lightweight JDK to run the app
+FROM eclipse-temurin:17-jdk-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8081
+ENTRYPOINT ["java", "-jar", "app.jar"]
