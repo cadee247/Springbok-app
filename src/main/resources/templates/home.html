@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: "Inter", "Segoe UI", Tahoma, sans-serif;
+            background-color: #ffffff; /* keep white */
+            color: #006847;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 60px 20px;
+            box-sizing: border-box;
+            min-height: 100vh;
+        }
+
+        /* --- LOGO --- */
+        .logo-img { width: auto; /* keep aspect ratio */ max-width: 200px; /* adjust max width */ height: auto; /* maintain aspect ratio */ object-fit: contain; /* ensure fully visible */ margin-bottom: 40px; /* spacing below logo */ }
+
+
+
+
+        .logo-img:hover {
+            transform: scale(1.05);
+        }
+
+        /* --- HEADINGS --- */
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #006847;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            font-size: 1.15rem;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        /* --- BUTTONS --- */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 750px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 0.7rem 1.8rem;
+            background-color: #006847;
+            color: #fff;
+            font-weight: 600;
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 0.55rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .btn:hover {
+            background-color: #005236;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.16);
+        }
+
+        /* Admin button – gold + class */
+        .btn-admin {
+            background-color: #fcbf49;
+            color: #004d35;
+            font-weight: 700;
+        }
+
+        .btn-admin:hover {
+            background-color: #e8ac3f;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            margin-top: auto;
+            color: #555;
+            font-size: 0.9rem;
+            padding: 25px 0;
+            width: 100%;
+            max-width: 900px;
+            border-top: 1px solid #eaeaea;
+            margin-top: 60px;
+        }
+
+        /* --- MOBILE --- */
+        @media (max-width: 600px) {
+            body { padding: 40px 15px; }
+            h1 { font-size: 2.1rem; }
+            p { font-size: 1rem; }
+            .btn {
+                width: 100%;
+                padding: 0.85rem;
+                font-size: 1rem;
+            }
+            .button-container {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .logo-img {
+                max-width: 130px;
+                margin-bottom: 25px;
+            }
+        }
+    </style>
+
+
+</head>
+<body>
+<img th:src="@{/images/logo.jpg}" alt="Springbok Logo" class="logo-img">
+<h1>Howzit, Bokke Nation!</h1>
+<p>You are logged in and part of the Bokke family!</p>
+
+<!-- Debug: show username & roles -->
+<p>Logged in as: <span th:text="${#authentication.name}"></span></p>
+<p>Roles: <span th:text="${#authentication.authorities}"></span></p>
+
+<div class="button-container">
+    <a href="/public-matches" class="btn">View Upcoming Matches</a>
+    <a href="/memes" class="btn">🤣 Meme Wall</a>
+    <a href="/shop" class="btn">🛒 Bokke Store</a>
+
+    <!-- Admin button: ONLY visible for ROLE_ADMIN -->
+    <a href="/matches" class="btn btn-admin"
+       th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+        Manage Matches (Admin)
+    </a>
+</div>
+
+<footer>
+    <p>🇿🇦 Springbok App • From concept to code: a showcase of skills.</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Bokke Meme Wall</title>
+    <style>
+        body { font-family: "Poppins", sans-serif; background: #f4f6f4; color: #222; text-align: center; padding: 20px; }
+        h1 { color: #007749; margin-bottom: 10px; }
+        .homepage-btn {
+            background: #007749;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .homepage-btn:hover { background: #005f3a; }
+        .upload-form { background: white; padding: 15px; border-radius: 10px; width: 50%; margin: 0 auto 30px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        input, textarea { width: 90%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 6px; }
+        button { background: #007749; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+        button:hover { background: #005f3a; }
+        .meme-card { background: white; border-radius: 10px; margin: 20px auto; padding: 15px; width: 70%; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .meme-img { width: 100%; border-radius: 10px; object-fit: cover; }
+        .comment { background: #f1f1f1; padding: 8px; border-radius: 8px; margin: 6px 0; text-align: left; }
+        .comment strong { color: #007749; }
+        .comment small { display: block; color: #666; font-size: 0.8em; }
+        .comment-form input { width: 40%; margin-right: 5px; }
+        .admin-btn { background: #ffc425; color: #004d35; margin: 5px; padding: 5px 10px; border-radius: 5px; text-decoration: none; display: inline-block; }
+        .admin-btn:hover { background: #ffb302; }
+        #imagePreview img { max-width: 100%; border-radius: 10px; margin-top: 10px; }
+        form.inline { display: inline; }
+    </style>
+</head>
+<body>
+
+<h1>🤣 Bokke Meme Wall</h1>
+
+<!-- Homepage Button -->
+<a href="/" class="homepage-btn"> Home</a>
+
+<!-- Upload Meme Form -->
+<form class="upload-form" th:action="@{/memes/upload}" method="post" enctype="multipart/form-data">
+    <input type="text" name="username" placeholder="Your name" required>
+    <input type="text" name="title" placeholder="Meme title" required>
+    <textarea name="description" placeholder="Add a caption..." required></textarea>
+    <input type="file" name="image" accept="image/*" required id="imageInput">
+    <div id="imagePreview"></div>
+    <input type="hidden" sec:csrf />
+    <button type="submit">Upload Meme</button>
+</form>
+
+<!-- Meme Feed -->
+<div th:each="meme : ${memes}" class="meme-card">
+    <h3 th:text="${meme.title}"></h3>
+    <p th:text="${meme.description}"></p>
+
+    <div th:if="${meme.imageUrl != null}">
+        <img th:src="@{${meme.imageUrl}}" class="meme-img" alt="Meme image" onerror="this.style.display='none';">
+    </div>
+
+    <p><strong>Posted by:</strong> <span th:text="${meme.username}"></span></p>
+
+    <!-- Admin buttons -->
+    <div sec:authorize="hasRole('ROLE_ADMIN')">
+        <a th:href="@{'/memes/edit/' + ${meme.id}}" class="admin-btn">Edit</a>
+        <form th:action="@{'/memes/delete/' + ${meme.id}}" method="post" class="inline">
+            <input type="hidden" sec:csrf />
+            <button type="submit" class="admin-btn" onclick="return confirm('Are you sure you want to delete this meme?')">Delete</button>
+        </form>
+    </div>
+
+    <!-- Comments Section -->
+    <h4>Comments 💬</h4>
+    <div th:each="comment : ${meme.comments}">
+        <div class="comment">
+            <strong th:text="${comment.username}"></strong>
+            <span th:text="${comment.content}"></span>
+            <small th:text="${#temporals.format(comment.createdAt, 'dd MMM yyyy HH:mm')}"></small>
+        </div>
+    </div>
+
+    <!-- Add Comment -->
+    <form class="comment-form" th:action="@{'/memes/' + ${meme.id} + '/comment'}" method="post">
+        <input type="text" name="username" placeholder="Your name" required>
+        <input type="text" name="content" placeholder="Add a comment..." required>
+        <input type="hidden" sec:csrf />
+        <button type="submit">Post</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const imageInput = document.getElementById("imageInput");
+        const previewContainer = document.getElementById("imagePreview");
+        imageInput.addEventListener("change", function () {
+            previewContainer.innerHTML = "";
+            const file = this.files[0];
+            if (file && file.type.startsWith("image/")) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

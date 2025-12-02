@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${product.name}">Product</title>
+    <script src="https://www.paypal.com/sdk/js?client-id=ARV733xl_0Moct3o9IPk24bowSs62wdHzBDgi0bJkPs7uxWE2a3bQunvaQ57WjGdgeKN9NsHzetnHOKm&currency=ZAR"></script>
+
+
+</head>
+<body>
+<h1 th:text="${product.name}"></h1>
+<img th:src="${product.imageUrl}" alt="product image" width="200">
+<p th:text="${product.description}"></p>
+<p>Price: $<span th:text="${product.price}"></span></p>
+<div id="paypal-button-container"></div>
+
+<script>
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: "0.01"   // DEMO amount — always works
+                    }
+                }]
+            });
+        },
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(details) {
+                alert("Payment completed by " + details.payer.name.given_name);
+            });
+        }
+    }).render('#paypal-button-container');
+</script>
+
+</body>
+</html>

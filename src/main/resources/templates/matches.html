@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Matches</title>
+    <!-- Bootstrap CSS for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/matches.css}" />
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">Springbok Matches</h1>
+
+    <!-- Form to add new match (Admin only) -->
+    <div sec:authorize="hasRole('ROLE_ADMIN')">
+        <div class="card mb-4">
+            <div class="card-header">Add New Match</div>
+            <div class="card-body">
+                <form th:action="@{/matches}" th:object="${match}" method="post">
+                    <div class="mb-3">
+                        <label for="matchDate" class="form-label">Match Date</label>
+                        <input type="date" id="matchDate" class="form-control" th:field="*{matchDate}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="opponent" class="form-label">Opponent</label>
+                        <input type="text" id="opponent" class="form-control" th:field="*{opponent}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="venue" class="form-label">Venue</label>
+                        <input type="text" id="venue" class="form-control" th:field="*{venue}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="springbokScore" class="form-label">Springbok Score</label>
+                        <input type="number" id="springbokScore" class="form-control" th:field="*{springbokScore}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="opponentScore" class="form-label">Opponent Score</label>
+                        <input type="number" id="opponentScore" class="form-control" th:field="*{opponentScore}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="result" class="form-label">Result</label>
+                        <input type="text" id="result" class="form-control" th:field="*{result}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Match</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Matches table -->
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Opponent</th>
+            <th>Venue</th>
+            <th>Springbok Score</th>
+            <th>Opponent Score</th>
+            <th>Result</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="match : ${matches}">
+            <td th:text="${match.matchDate}"></td>
+            <td th:text="${match.opponent}"></td>
+            <td th:text="${match.venue}"></td>
+            <td th:text="${match.springbokScore}"></td>
+            <td th:text="${match.opponentScore}"></td>
+            <td th:text="${match.result}"></td>
+            <td>
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a th:href="@{'/matches/edit/' + ${match.id}}" class="btn btn-sm btn-warning">Edit</a>
+                    <a th:href="@{'/matches/delete/' + ${match.id}}" class="btn btn-sm btn-danger"
+                       onclick="return confirm('Are you sure?')">Delete</a>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<!-- Optional Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

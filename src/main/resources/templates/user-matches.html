@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Upcoming Matches</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #f4f4f9, #e0e5ef);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            color: #006847;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+        }
+
+        table {
+            width: 90%;
+            max-width: 1000px;
+            margin: 0 auto 40px;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+            background-color: #006847;
+        }
+
+        th, td {
+            padding: 14px 20px;
+            text-align: center;
+            color: #fcbf49;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        th {
+            background-color: #006847;
+            color: #fcbf49;
+            text-transform: uppercase;
+            font-size: 0.95rem;
+        }
+
+        tr:nth-child(even) { background-color: #004d35; }
+
+        tr:hover {
+            background-color: #005c3e;
+            transition: background-color 0.3s ease;
+        }
+
+        a.button {
+            display: inline-block;
+            text-decoration: none;
+            background-color: #006847;
+            color: #fcbf49;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        a.button:hover {
+            background-color: #004d35;
+            transform: translateY(-2px);
+        }
+
+        .player-section-title {
+            text-align: center;
+            font-size: 1.9rem;
+            color: #006847;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+
+        .player-grid {
+            width: 90%;
+            max-width: 1100px;
+            margin: 0 auto 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 22px;
+        }
+
+        .player-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+            padding: 16px;
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .player-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .player-img {
+            width: 100%;
+            height: 230px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .player-name {
+            font-size: 1.3rem;
+            color: #006847;
+            margin: 10px 0 5px;
+        }
+
+        .player-role,
+        .player-jersey {
+            font-size: 1rem;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+<div style="text-align: center;">
+    <a href="/home" class="button">Back to Home</a>
+</div>
+<h1>Game matches for 2025</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Date</th>
+        <th>Opponent</th>
+        <th>Venue</th>
+        <th>Springbok Score</th>
+        <th>Opponent Score</th>
+        <th>Result</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="match : ${matches}">
+        <td th:text="${#temporals.format(match.matchDate, 'dd MMM yyyy')}"></td>
+        <td th:text="${match.opponent}"></td>
+        <td th:text="${match.venue}"></td>
+        <td th:text="${match.springbokScore}"></td>
+        <td th:text="${match.opponentScore}"></td>
+        <td th:text="${match.result}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<h2 class="player-section-title">🇿🇦 Springbok Player Lineup</h2>
+
+<div class="player-grid">
+    <div th:each="player : ${players}" class="player-card">
+        <img th:src="@{'/images/' + ${player.imageFileName}}"
+             onerror="this.onerror=null; this.src='/images/default.jpg';"
+             class="player-img"
+             th:alt="'Image of ' + ${player.name}">
+        <div class="player-name" th:text="${player.name}"></div>
+        <div class="player-role"><strong>Role:</strong> <span th:text="${player.role}"></span></div>
+        <div class="player-jersey"><strong>Jersey #:</strong> <span th:text="${player.jerseyNumber}"></span></div>
+    </div>
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Meme</title>
+    <style>
+        body { font-family: "Poppins", sans-serif; background: #f4f6f4; padding: 30px; text-align: center; }
+        form { background: white; padding: 20px; border-radius: 10px; display: inline-block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        input, textarea { width: 100%; padding: 10px; margin: 5px 0; border-radius: 6px; border: 1px solid #ccc; }
+        button { background: #007749; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+        button:hover { background: #005f3a; }
+    </style>
+</head>
+<body>
+<h1>Edit Meme</h1>
+<form th:action="@{'/memes/update/' + ${meme.id}}" method="post">
+    <input type="text" name="title" th:value="${meme.title}" placeholder="Title" required>
+    <textarea name="description" placeholder="Description" required th:text="${meme.description}"></textarea>
+    <button type="submit">Update Meme</button>
+</form>
+</body>
+</html>

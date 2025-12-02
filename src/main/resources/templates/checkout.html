@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Checkout</title>
+
+    <!-- PAYPAL SANDBOX -->
+    <script src="https://www.paypal.com/sdk/js?client-id=ARV733xl_0Moct3o9lPk24bowSs62wdHzBDgi0bJkPs7uxWE2a3bQunvaQ57WjGdgeKN9NsHzetnHOkm&currency=USD"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #f4f4f9, #e0e5ef);
+            margin: 0;
+            padding: 40px;
+            color: #333;
+            text-align: center;
+        }
+
+        h1 {
+            color: #006847;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #006847;
+            margin-bottom: 20px;
+        }
+
+        strong {
+            color: #fcbf49;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        #paypal-button-container {
+            margin-top: 35px;
+            display: inline-block;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+<h1 th:text="'Checkout: ' + ${name}"></h1>
+
+<p>Total: <strong>$<span th:text="${price}"></span></strong></p>
+
+<div id="paypal-button-container"></div>
+
+<script th:inline="javascript">
+    let itemPrice = [[${price}]];
+    let itemName = [[${name}]];
+
+    paypal.Buttons({
+        createOrder: function (data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    description: itemName,
+                    amount: { value: itemPrice }
+                }]
+            });
+        },
+
+        onApprove: function (data, actions) {
+            return actions.order.capture().then(function (details) {
+                alert("Payment successful! Thank you " + details.payer.name.given_name);
+                window.location.href = "/shop";
+            });
+        }
+    }).render('#paypal-button-container');
+</script>
+
+</body>
+</html>

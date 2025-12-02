@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Bokke Store</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #f4f4f9, #e0e5ef);
+            margin: 0;
+            padding: 25px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #006847;
+            font-size: 2.4rem;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            text-decoration: none;
+            background-color: #006847;
+            color: #fcbf49;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-bottom: 30px;
+        }
+
+        .button:hover {
+            background-color: #004d35;
+            transform: translateY(-2px);
+        }
+
+        /* Product Grid Matches Style */
+        .grid {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 22px;
+        }
+
+        .item {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            padding: 16px;
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .item:hover {
+            transform: translateY(-5px);
+        }
+
+        .item img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #006847;
+            font-size: 1.3rem;
+            margin: 10px 0 3px;
+        }
+
+        p {
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .buy-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px;
+            background: #fcbf49;
+            color: #004d35;
+            font-weight: bold;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.25s ease, transform 0.2s ease;
+        }
+
+        .buy-button:hover {
+            background: #e6a83e;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Bokke Store 🦌</h1>
+
+<div style="text-align: center;">
+    <a href="/home" class="button">Back to Home</a>
+</div>
+
+<div class="grid">
+
+    <div class="item">
+        <img th:src="@{/ProductImages/rugbyball.jpg}">
+        <h2>Bokke Rugby Ball</h2>
+        <p>Price: $15</p>
+        <a class="buy-button" th:href="@{'/checkout'(price=15)}">Buy Now</a>
+    </div>
+
+    <div class="item">
+        <img th:src="@{/ProductImages/scarf.jpg}">
+        <h2>Bokke Fan Scarf</h2>
+        <p>Price: $10</p>
+        <a class="buy-button" th:href="@{'/checkout'(price=10)}">Buy Now</a>
+    </div>
+
+    <div class="item">
+        <img th:src="@{/ProductImages/apron.jpg}">
+        <h2>Bokke Apron</h2>
+        <p>Price: $8</p>
+        <a class="buy-button" th:href="@{'/checkout'(price=8)}">Buy Now</a>
+    </div>
+
+    <div class="item">
+        <img th:src="@{/ProductImages/blanket.jpg}">
+        <h2>Bokke Blanket</h2>
+        <p>Price: $12</p>
+        <a class="buy-button" th:href="@{'/checkout'(price=12)}">Buy Now</a>
+    </div>
+
+    <div class="item">
+        <img th:src="@{/ProductImages/coolerbag.jpg}">
+        <h2>Bokke Cooler Bag</h2>
+        <p>Price: $5</p>
+        <a class="buy-button" th:href="@{'/checkout'(price=5)}">Buy Now</a>
+    </div>
+
+    <div class="item">
+        <img th:src="@{/ProductImages/earings.jpg}">
+        <h2>Bokke Earrings</h2>
+        <p>Price: $5</p>
+        <a class="buy-button" th:href="@{'/checkout'(price=5)}">Buy Now</a>
+    </div>
+
+    <div class="item">
+        <img th:src="@{/ProductImages/hoodie.jpg}">
+        <h2>Bokke Hoodie</h2>
+        <p>Price: $25</p>
+        <a class="buy-button" th:href="@{'/checkout'(price=25)}">Buy Now</a>
+    </div>
+
+    <div class="item">
+        <img th:src="@{/ProductImages/necklace.jpg}">
+        <h2>Bokke Necklace</h2>
+        <p>Price: $5</p>
+        <a class="buy-button" th:href="@{'/checkout'(price=5)}">Buy Now</a>
+    </div>
+
+    <div class="item">
+        <img th:src="@{/ProductImages/totebag.jpg}">
+        <h2>Bokke Tote Bag</h2>
+        <p>Price: $10</p>
+        <a class="buy-button" th:href="@{'/checkout'(price=10)}">Buy Now</a>
+    </div>
+
+    <div class="item">
+        <img th:src="@{/ProductImages/tumbler.jpg}">
+        <h2>Bokke Tumbler</h2>
+        <p>Price: $10</p>
+        <a class="buy-button" th:href="@{'/checkout'(price=10)}">Buy Now</a>
+    </div>
+
+</div>
+
+</body>
+</html>

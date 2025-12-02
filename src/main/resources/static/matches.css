@@ -1,0 +1,131 @@
+/* === Body & page setup === */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f6f6f6; /* light neutral background */
+    color: #1a1a1a;
+    margin: 0;
+    padding: 20px;
+}
+
+/* === Heading === */
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #006847; /* Bokke green */
+    text-shadow: 1px 1px 2px #fcbf49; /* subtle gold glow */
+}
+
+/* === Form container === */
+form {
+    background-color: #ffffff;
+    padding: 20px;
+    margin: 0 auto 40px auto;
+    border-radius: 12px;
+    max-width: 600px;
+    border: 2px solid #fcbf49; /* gold border */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* === Input fields === */
+form input, form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    border: 1px solid #006847; /* green border */
+    font-size: 14px;
+}
+
+/* === Buttons === */
+form button, .btn-custom {
+    display: inline-block;
+    width: 100%;
+    padding: 12px 20px;
+    background-color: #006847; /* Bokke green */
+    color: #fcbf49; /* gold text */
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    border: 2px solid #fcbf49; /* gold border */
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Hover effect */
+form button:hover, .btn-custom:hover {
+    background-color: #004d35; /* darker green */
+    color: #ffffff; /* text changes to white on hover */
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Active / pressed effect */
+form button:active, .btn-custom:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Optional smaller buttons (like Edit/Delete) */
+.btn-small {
+    width: auto;
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+}
+
+
+/* === Table styling === */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #006847; /* green border */
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    font-weight: 500;
+}
+
+th {
+    background-color: #fcbf49; /* gold header */
+    color: #006847; /* green text */
+}
+
+tr:nth-child(even) {
+    background-color: #eaf6e9; /* light green row */
+}
+
+tr:nth-child(odd) {
+    background-color: #ffffff; /* white row */
+}
+
+/* === Action links === */
+a {
+    color: #006847; /* green links */
+    font-weight: bold;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+a:hover {
+    color: #fcbf49; /* gold hover */
+    text-decoration: underline;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    form, table {
+        width: 100%;
+    }
+
+    th, td {
+        padding: 8px;
+    }
+}
