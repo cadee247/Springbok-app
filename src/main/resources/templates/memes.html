@@ -118,10 +118,54 @@
             box-shadow: 0 6px 16px rgba(0,0,0,0.2);
         }
 
+        /* File upload */
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .file-upload-btn {
+            display: inline-block;
+            background: var(--bokke-green);
+            color: white;
+            font-weight: 700;
+            padding: 0.6rem 1.2rem;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.15s ease;
+            text-align: center;
+        }
+
+        .file-upload-btn:hover {
+            background: var(--bokke-green-dark);
+            transform: translateY(-1px);
+        }
+
+        .file-name {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-style: italic;
+            flex: 1;
+            min-width: 120px;
+        }
+
         #imagePreview img {
             max-width: 100%;
             border-radius: 14px;
             margin-top: 0.75rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        #imagePreview img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.2);
         }
 
         /* Meme card */
@@ -241,6 +285,15 @@
             .comment-form button {
                 width: 100%;
             }
+
+            .file-upload-wrapper {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .file-name {
+                margin-top: 0.4rem;
+            }
         }
     </style>
 </head>
@@ -254,14 +307,19 @@
     <a href="/" class="homepage-btn">Home</a>
 </div>
 
-<!-- Upload -->
+<!-- Upload Form -->
 <form class="upload-form" th:action="@{/memes/upload}" method="post" enctype="multipart/form-data">
     <h3>Upload a Bokke Meme</h3>
 
     <input type="text" name="username" placeholder="Your name" required>
     <input type="text" name="title" placeholder="Meme title" required>
     <textarea name="description" placeholder="Add a caption..." required></textarea>
-    <input type="file" name="image" accept="image/*" required id="imageInput">
+
+    <div class="file-upload-wrapper">
+        <label for="imageInput" class="file-upload-btn">Choose Meme Image</label>
+        <input type="file" name="image" accept="image/*" required id="imageInput">
+        <span id="fileName" class="file-name">No file selected</span>
+    </div>
 
     <div id="imagePreview"></div>
 
@@ -269,15 +327,12 @@
     <button type="submit">Post Meme</button>
 </form>
 
-<!-- Feed -->
+<!-- Meme Feed -->
 <div th:each="meme : ${memes}" class="meme-card">
     <h3 th:text="${meme.title}"></h3>
     <p th:text="${meme.description}"></p>
 
-    <img th:if="${meme.imageUrl != null}"
-         th:src="@{${meme.imageUrl}}"
-         class="meme-img"
-         alt="Meme image">
+    <img th:if="${meme.imageUrl != null}" th:src="@{${meme.imageUrl}}" class="meme-img" alt="Meme image">
 
     <div class="meta">
         Posted by <strong th:text="${meme.username}"></strong>
@@ -287,23 +342,19 @@
         <a th:href="@{'/memes/edit/' + ${meme.id}}" class="admin-btn">Edit</a>
         <form th:action="@{'/memes/delete/' + ${meme.id}}" method="post" class="inline">
             <input type="hidden" sec:csrf />
-            <button type="submit" class="admin-btn"
-                    onclick="return confirm('Delete this meme?')">Delete</button>
+            <button type="submit" class="admin-btn" onclick="return confirm('Delete this meme?')">Delete</button>
         </form>
     </div>
 
     <div class="comments">
         <h4>Comments</h4>
-
         <div th:each="comment : ${meme.comments}" class="comment">
             <strong th:text="${comment.username}"></strong>
             <span th:text="${comment.content}"></span>
             <small th:text="${#temporals.format(comment.createdAt, 'dd MMM yyyy HH:mm')}"></small>
         </div>
 
-        <form class="comment-form"
-              th:action="@{'/memes/' + ${meme.id} + '/comment'}"
-              method="post">
+        <form class="comment-form" th:action="@{'/memes/' + ${meme.id} + '/comment'}" method="post">
             <input type="text" name="username" placeholder="Your name" required>
             <input type="text" name="content" placeholder="Add a comment..." required>
             <input type="hidden" sec:csrf />
@@ -316,19 +367,26 @@
     document.addEventListener("DOMContentLoaded", function () {
         const imageInput = document.getElementById("imageInput");
         const previewContainer = document.getElementById("imagePreview");
+        const fileNameDisplay = document.getElementById("fileName");
 
         imageInput.addEventListener("change", function () {
             previewContainer.innerHTML = "";
-            const file = this.files[0];
 
-            if (file && file.type.startsWith("image/")) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    const img = document.createElement("img");
-                    img.src = e.target.result;
-                    previewContainer.appendChild(img);
-                };
-                reader.readAsDataURL(file);
+            if (this.files.length > 0) {
+                const file = this.files[0];
+                fileNameDisplay.textContent = file.name;
+
+                if (file.type.startsWith("image/")) {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            } else {
+                fileNameDisplay.textContent = "No file selected";
             }
         });
     });
