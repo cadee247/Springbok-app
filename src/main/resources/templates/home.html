@@ -4,140 +4,150 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+
     <style>
+        /* --- RESET / BASE --- */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         html, body {
-            height: 100%;
             margin: 0;
             padding: 0;
+            width: 100%;
+            min-height: 100%;
             overflow-x: hidden;
         }
 
         body {
             font-family: "Inter", "Segoe UI", Tahoma, sans-serif;
-            background-color: #ffffff; /* keep white */
+            background-color: #ffffff;
             color: #006847;
-            text-align: center;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
             align-items: center;
-            padding: 60px 20px;
-            box-sizing: border-box;
-            min-height: 100vh;
+            padding: env(safe-area-inset-top, 48px) 20px
+            env(safe-area-inset-bottom, 24px);
+            text-align: center;
         }
 
         /* --- LOGO --- */
-        .logo-img { width: auto; /* keep aspect ratio */ max-width: 200px; /* adjust max width */ height: auto; /* maintain aspect ratio */ object-fit: contain; /* ensure fully visible */ margin-bottom: 40px; /* spacing below logo */ }
+        .logo-img {
+            max-width: min(200px, 60vw);
+            height: auto;
+            margin-bottom: 32px;
+            transition: transform 0.25s ease;
+        }
 
-
-
-
-        .logo-img:hover {
-            transform: scale(1.05);
+        /* Hover only on non-touch devices */
+        @media (hover: hover) {
+            .logo-img:hover {
+                transform: scale(1.05);
+            }
         }
 
         /* --- HEADINGS --- */
         h1 {
-            font-size: 2.8rem;
+            font-size: clamp(1.9rem, 5vw, 2.8rem);
             font-weight: 700;
-            color: #006847;
             margin-bottom: 8px;
             letter-spacing: -0.5px;
         }
 
         p {
-            font-size: 1.15rem;
+            font-size: clamp(0.95rem, 3.5vw, 1.15rem);
             color: #333;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+            max-width: 700px;
         }
 
         /* --- BUTTONS --- */
         .button-container {
-            display: flex;
-            justify-content: center;
-            gap: 14px;
-            flex-wrap: wrap;
             width: 100%;
-            max-width: 750px;
+            max-width: 720px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            justify-content: center;
             margin-top: 10px;
         }
 
         .btn {
-            padding: 0.7rem 1.8rem;
+            flex: 1 1 220px;
+            padding: 0.85rem 1.2rem;
             background-color: #006847;
-            color: #fff;
+            color: #ffffff;
             font-weight: 600;
-            border: 1px solid rgba(0,0,0,0.05);
-            border-radius: 0.55rem;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.25s ease;
+            border-radius: 0.6rem;
             text-decoration: none;
-            display: inline-block;
+            font-size: 1rem;
+            border: none;
             box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-align: center;
         }
 
-        .btn:hover {
-            background-color: #005236;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.16);
+        @media (hover: hover) {
+            .btn:hover {
+                background-color: #005236;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(0,0,0,0.16);
+            }
         }
 
-        /* Admin button – gold + class */
+        /* --- ADMIN BUTTON --- */
         .btn-admin {
             background-color: #fcbf49;
             color: #004d35;
             font-weight: 700;
         }
 
-        .btn-admin:hover {
-            background-color: #e8ac3f;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+        @media (hover: hover) {
+            .btn-admin:hover {
+                background-color: #e8ac3f;
+            }
         }
 
         /* --- FOOTER --- */
         footer {
             margin-top: auto;
-            color: #555;
-            font-size: 0.9rem;
-            padding: 25px 0;
             width: 100%;
             max-width: 900px;
+            padding: 28px 0 10px;
             border-top: 1px solid #eaeaea;
-            margin-top: 60px;
+            font-size: 0.9rem;
+            color: #555;
         }
 
-        /* --- MOBILE --- */
+        /* --- SMALL SCREENS --- */
         @media (max-width: 600px) {
-            body { padding: 40px 15px; }
-            h1 { font-size: 2.1rem; }
-            p { font-size: 1rem; }
-            .btn {
-                width: 100%;
-                padding: 0.85rem;
-                font-size: 1rem;
-            }
             .button-container {
                 flex-direction: column;
-                gap: 12px;
             }
+
+            .btn {
+                width: 100%;
+                font-size: 1rem;
+                padding: 0.95rem;
+            }
+
             .logo-img {
                 max-width: 130px;
-                margin-bottom: 25px;
+                margin-bottom: 24px;
             }
         }
     </style>
-
-
 </head>
+
 <body>
+
 <img th:src="@{/images/logo.jpg}" alt="Springbok Logo" class="logo-img">
+
 <h1>Howzit, Bokke Nation!</h1>
 <p>You are logged in and part of the Bokke family!</p>
 
-<!-- Debug: show username & roles -->
-<p>Logged in as: <span th:text="${#authentication.name}"></span></p>
+<!-- Debug info -->
+<p>Logged in as: <strong th:text="${#authentication.name}"></strong></p>
 <p>Roles: <span th:text="${#authentication.authorities}"></span></p>
 
 <div class="button-container">
@@ -145,15 +155,16 @@
     <a href="/memes" class="btn">🤣 Meme Wall</a>
     <a href="/shop" class="btn">🛒 Bokke Store</a>
 
-    <!-- Admin button: ONLY visible for ROLE_ADMIN -->
-    <a href="/matches" class="btn btn-admin"
+    <a href="/matches"
+       class="btn btn-admin"
        th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
         Manage Matches (Admin)
     </a>
 </div>
 
 <footer>
-    <p>🇿🇦 Springbok App • From concept to code: a showcase of skills.</p>
+    🇿🇦 Springbok App • From concept to code: a showcase of skills.
 </footer>
+
 </body>
 </html>

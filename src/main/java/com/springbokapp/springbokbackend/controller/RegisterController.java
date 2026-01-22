@@ -31,7 +31,8 @@ public class RegisterController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         // Default role USER
-        user.setRole("USER");
+        user.setRole("ROLE_USER");
+
 
         // Save to database
         userRepository.save(user);

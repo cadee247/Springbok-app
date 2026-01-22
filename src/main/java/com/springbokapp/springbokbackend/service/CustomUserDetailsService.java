@@ -23,25 +23,17 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-
-        if (user == null || user.getPassword() == null || user.getRole() == null) {
-            throw new UsernameNotFoundException("User not found or missing credentials");
-        }
-
-        // Normalize role value from DB
-        String rawRole = user.getRole().toUpperCase().trim();
-
-        // Ensure prefix is applied only once
-        String roleWithPrefix = rawRole.startsWith("ROLE_") ? rawRole : "ROLE_" + rawRole;
-
-        // Debug log (optional): useful during login failures
-        System.out.println("Authenticating user: " + user.getUsername() + " with role: " + roleWithPrefix);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority(roleWithPrefix))
+                Collections.singletonList(
+                        new SimpleGrantedAuthority(user.getRole())
+                )
         );
     }
+
+
 }

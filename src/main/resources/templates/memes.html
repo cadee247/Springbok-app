@@ -2,52 +2,329 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
+    <meta charset="UTF-8">
     <title>Bokke Meme Wall</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <style>
-        body { font-family: "Poppins", sans-serif; background: #f4f6f4; color: #222; text-align: center; padding: 20px; }
-        h1 { color: #007749; margin-bottom: 10px; }
-        .homepage-btn {
-            background: #007749;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 6px;
-            text-decoration: none;
-            display: inline-block;
-            margin-bottom: 20px;
+        :root {
+            --bokke-green: #007749;
+            --bokke-green-dark: #005f3a;
+            --bokke-gold: #ffc425;
+            --bg-light: #f4f6f4;
+            --card-bg: #ffffff;
+            --text-muted: #555;
         }
-        .homepage-btn:hover { background: #005f3a; }
-        .upload-form { background: white; padding: 15px; border-radius: 10px; width: 50%; margin: 0 auto 30px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        input, textarea { width: 90%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 6px; }
-        button { background: #007749; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
-        button:hover { background: #005f3a; }
-        .meme-card { background: white; border-radius: 10px; margin: 20px auto; padding: 15px; width: 70%; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .meme-img { width: 100%; border-radius: 10px; object-fit: cover; }
-        .comment { background: #f1f1f1; padding: 8px; border-radius: 8px; margin: 6px 0; text-align: left; }
-        .comment strong { color: #007749; }
-        .comment small { display: block; color: #666; font-size: 0.8em; }
-        .comment-form input { width: 40%; margin-right: 5px; }
-        .admin-btn { background: #ffc425; color: #004d35; margin: 5px; padding: 5px 10px; border-radius: 5px; text-decoration: none; display: inline-block; }
-        .admin-btn:hover { background: #ffb302; }
-        #imagePreview img { max-width: 100%; border-radius: 10px; margin-top: 10px; }
-        form.inline { display: inline; }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Poppins", system-ui, sans-serif;
+            background: linear-gradient(180deg, #eef3ef, #f4f6f4);
+            color: #222;
+            margin: 0;
+            padding: 1rem;
+        }
+
+        h1 {
+            color: var(--bokke-green);
+            text-align: center;
+            margin-bottom: 0.25rem;
+            font-size: clamp(1.6rem, 4vw, 2.2rem);
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1.25rem;
+        }
+
+        /* Header */
+        .header-actions {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .homepage-btn {
+            background: var(--bokke-green);
+            color: white;
+            padding: 0.55rem 1.3rem;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .homepage-btn:hover {
+            background: var(--bokke-green-dark);
+        }
+
+        /* Upload form */
+        .upload-form {
+            background: var(--card-bg);
+            padding: 1.4rem;
+            border-radius: 16px;
+            max-width: 620px;
+            margin: 0 auto 2rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            border-top: 6px solid var(--bokke-gold);
+        }
+
+        .upload-form h3 {
+            margin: 0 0 0.75rem;
+            color: var(--bokke-green);
+            font-weight: 700;
+        }
+
+        input,
+        textarea,
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 0.6rem;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--bokke-green);
+            box-shadow: 0 0 0 3px rgba(0,119,73,0.25);
+        }
+
+        button {
+            background: var(--bokke-green);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            margin-top: 1rem;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        button:hover {
+            background: var(--bokke-green-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+
+        /* File upload */
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .file-upload-btn {
+            display: inline-block;
+            background: var(--bokke-green);
+            color: white;
+            font-weight: 700;
+            padding: 0.6rem 1.2rem;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.15s ease;
+            text-align: center;
+        }
+
+        .file-upload-btn:hover {
+            background: var(--bokke-green-dark);
+            transform: translateY(-1px);
+        }
+
+        .file-name {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-style: italic;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        #imagePreview img {
+            max-width: 100%;
+            border-radius: 14px;
+            margin-top: 0.75rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        #imagePreview img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+        }
+
+        /* Meme card */
+        .meme-card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 1.1rem;
+            max-width: 720px;
+            margin: 0 auto 1.6rem;
+            box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .meme-card h3 {
+            margin-bottom: 0.3rem;
+            font-weight: 700;
+        }
+
+        .meme-img {
+            width: 100%;
+            border-radius: 16px;
+            margin: 0.8rem 0;
+            object-fit: cover;
+        }
+
+        .meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+        }
+
+        /* Admin */
+        .admin-actions {
+            margin-bottom: 0.6rem;
+        }
+
+        .admin-btn {
+            background: var(--bokke-gold);
+            color: #004d35;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            margin-right: 0.3rem;
+        }
+
+        .admin-btn:hover {
+            background: #ffb302;
+        }
+
+        form.inline {
+            display: inline;
+        }
+
+        /* Comments */
+        .comments {
+            margin-top: 1rem;
+        }
+
+        .comments h4 {
+            margin-bottom: 0.5rem;
+            color: var(--bokke-green);
+        }
+
+        .comment {
+            background: #f0f3f1;
+            padding: 0.6rem 0.7rem;
+            border-radius: 10px;
+            margin-bottom: 0.45rem;
+        }
+
+        .comment strong {
+            color: var(--bokke-green);
+        }
+
+        .comment small {
+            display: block;
+            font-size: 0.72rem;
+            color: #666;
+        }
+
+        /* Comment form */
+        .comment-form {
+            margin-top: 0.7rem;
+            display: grid;
+            grid-template-columns: 1fr 2fr auto;
+            gap: 0.5rem;
+        }
+
+        .comment-form input,
+        .comment-form button {
+            margin: 0;
+        }
+
+        .comment-form button {
+            padding: 0.6rem 1rem;
+            border-radius: 999px;
+        }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            body {
+                padding: 0.75rem;
+            }
+
+            .comment-form {
+                grid-template-columns: 1fr;
+            }
+
+            .comment-form button {
+                width: 100%;
+            }
+
+            .file-upload-wrapper {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .file-name {
+                margin-top: 0.4rem;
+            }
+        }
     </style>
 </head>
+
 <body>
 
 <h1>🤣 Bokke Meme Wall</h1>
+<p class="subtitle">Post, laugh, and celebrate the Springboks</p>
 
-<!-- Homepage Button -->
-<a href="/" class="homepage-btn"> Home</a>
+<div class="header-actions">
+    <a href="/" class="homepage-btn">Home</a>
+</div>
 
-<!-- Upload Meme Form -->
+<!-- Upload Form -->
 <form class="upload-form" th:action="@{/memes/upload}" method="post" enctype="multipart/form-data">
+    <h3>Upload a Bokke Meme</h3>
+
     <input type="text" name="username" placeholder="Your name" required>
     <input type="text" name="title" placeholder="Meme title" required>
     <textarea name="description" placeholder="Add a caption..." required></textarea>
-    <input type="file" name="image" accept="image/*" required id="imageInput">
+
+    <div class="file-upload-wrapper">
+        <label for="imageInput" class="file-upload-btn">Choose Meme Image</label>
+        <input type="file" name="image" accept="image/*" required id="imageInput">
+        <span id="fileName" class="file-name">No file selected</span>
+    </div>
+
     <div id="imagePreview"></div>
+
     <input type="hidden" sec:csrf />
-    <button type="submit">Upload Meme</button>
+    <button type="submit">Post Meme</button>
 </form>
 
 <!-- Meme Feed -->
@@ -55,55 +332,61 @@
     <h3 th:text="${meme.title}"></h3>
     <p th:text="${meme.description}"></p>
 
-    <div th:if="${meme.imageUrl != null}">
-        <img th:src="@{${meme.imageUrl}}" class="meme-img" alt="Meme image" onerror="this.style.display='none';">
+    <img th:if="${meme.imageUrl != null}" th:src="@{${meme.imageUrl}}" class="meme-img" alt="Meme image">
+
+    <div class="meta">
+        Posted by <strong th:text="${meme.username}"></strong>
     </div>
 
-    <p><strong>Posted by:</strong> <span th:text="${meme.username}"></span></p>
-
-    <!-- Admin buttons -->
-    <div sec:authorize="hasRole('ROLE_ADMIN')">
+    <div sec:authorize="hasRole('ROLE_ADMIN')" class="admin-actions">
         <a th:href="@{'/memes/edit/' + ${meme.id}}" class="admin-btn">Edit</a>
         <form th:action="@{'/memes/delete/' + ${meme.id}}" method="post" class="inline">
             <input type="hidden" sec:csrf />
-            <button type="submit" class="admin-btn" onclick="return confirm('Are you sure you want to delete this meme?')">Delete</button>
+            <button type="submit" class="admin-btn" onclick="return confirm('Delete this meme?')">Delete</button>
         </form>
     </div>
 
-    <!-- Comments Section -->
-    <h4>Comments 💬</h4>
-    <div th:each="comment : ${meme.comments}">
-        <div class="comment">
+    <div class="comments">
+        <h4>Comments</h4>
+        <div th:each="comment : ${meme.comments}" class="comment">
             <strong th:text="${comment.username}"></strong>
             <span th:text="${comment.content}"></span>
             <small th:text="${#temporals.format(comment.createdAt, 'dd MMM yyyy HH:mm')}"></small>
         </div>
-    </div>
 
-    <!-- Add Comment -->
-    <form class="comment-form" th:action="@{'/memes/' + ${meme.id} + '/comment'}" method="post">
-        <input type="text" name="username" placeholder="Your name" required>
-        <input type="text" name="content" placeholder="Add a comment..." required>
-        <input type="hidden" sec:csrf />
-        <button type="submit">Post</button>
-    </form>
+        <form class="comment-form" th:action="@{'/memes/' + ${meme.id} + '/comment'}" method="post">
+            <input type="text" name="username" placeholder="Your name" required>
+            <input type="text" name="content" placeholder="Add a comment..." required>
+            <input type="hidden" sec:csrf />
+            <button type="submit">Post</button>
+        </form>
+    </div>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const imageInput = document.getElementById("imageInput");
         const previewContainer = document.getElementById("imagePreview");
+        const fileNameDisplay = document.getElementById("fileName");
+
         imageInput.addEventListener("change", function () {
             previewContainer.innerHTML = "";
-            const file = this.files[0];
-            if (file && file.type.startsWith("image/")) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const img = document.createElement("img");
-                    img.src = e.target.result;
-                    previewContainer.appendChild(img);
-                };
-                reader.readAsDataURL(file);
+
+            if (this.files.length > 0) {
+                const file = this.files[0];
+                fileNameDisplay.textContent = file.name;
+
+                if (file.type.startsWith("image/")) {
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            } else {
+                fileNameDisplay.textContent = "No file selected";
             }
         });
     });

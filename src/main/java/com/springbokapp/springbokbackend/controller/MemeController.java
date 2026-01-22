@@ -28,6 +28,7 @@ public class MemeController {
     @Autowired
     private CommentRepository commentRepo;
 
+    // Upload folder in project root: demoAspringbok-backend/uploads/memes
     private final Path UPLOAD_DIR = Paths.get("uploads/memes");
 
     // ============================
@@ -42,7 +43,7 @@ public class MemeController {
         CsrfToken csrfToken = (CsrfToken) request.getAttribute("_csrf");
         model.addAttribute("_csrf", csrfToken);
 
-        return "memes";
+        return "memes"; // Thymeleaf template memes.html
     }
 
     // ============================
@@ -61,18 +62,20 @@ public class MemeController {
         // Sanitize filename
         String originalName = image.getOriginalFilename().replaceAll("[^a-zA-Z0-9._-]", "_");
         String fileName = System.currentTimeMillis() + "_" + originalName;
-        Path filePath = UPLOAD_DIR.resolve(fileName);
 
-        // Create folder if missing
+        // Ensure folder exists
         Files.createDirectories(UPLOAD_DIR);
+
+        // Save file to uploads/memes
+        Path filePath = UPLOAD_DIR.resolve(fileName);
         Files.write(filePath, image.getBytes());
 
-        // Save meme info
+        // Save meme info to database
         Meme meme = new Meme();
         meme.setTitle(title);
         meme.setDescription(description);
         meme.setUsername(username);
-        meme.setImageUrl("/uploads/memes/" + fileName);
+        meme.setImageUrl("/uploads/memes/" + fileName); // must match WebConfig path
         meme.setLaughs(0);
         memeRepo.save(meme);
 
@@ -80,7 +83,7 @@ public class MemeController {
     }
 
     // ============================
-    // ADD LAUGH (LIKE) via POST
+    // ADD LAUGH (LIKE)
     // ============================
     @PostMapping("/{id}/laugh")
     @ResponseBody
@@ -101,9 +104,12 @@ public class MemeController {
     public String deleteMeme(@PathVariable Long id) throws IOException {
         Meme meme = memeRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Meme not found"));
+
+        // Delete image file
         String filename = Paths.get(meme.getImageUrl()).getFileName().toString();
         Path filePath = UPLOAD_DIR.resolve(filename);
         Files.deleteIfExists(filePath);
+
         memeRepo.delete(meme);
         return "redirect:/memes";
     }
@@ -115,12 +121,13 @@ public class MemeController {
     public String editMeme(@PathVariable Long id, Model model, HttpServletRequest request) {
         Meme meme = memeRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Meme not found"));
+
         model.addAttribute("meme", meme);
 
         CsrfToken csrfToken = (CsrfToken) request.getAttribute("_csrf");
         model.addAttribute("_csrf", csrfToken);
 
-        return "edit-meme";
+        return "edit-meme"; // Thymeleaf template edit-meme.html
     }
 
     @PostMapping("/update/{id}")
@@ -166,6 +173,6 @@ public class MemeController {
         model.addAttribute("meme", meme);
         model.addAttribute("comments", comments);
 
-        return "comments"; // your Thymeleaf template for displaying comments
+        return "comments"; // Thymeleaf template for comments
     }
 }
